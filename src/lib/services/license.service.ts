@@ -1,6 +1,6 @@
 import { db, pool } from "../db";
 import { licenses, devices, bans, plans, applications } from "../db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, or, isNull, sql } from "drizzle-orm";
 import { generateLicenseKey, maskLicenseKey } from "../security/crypto";
 import { logAuditAction, logAuthEvent } from "./audit.service";
 import { triggerWebhooksForApp } from "./webhook.service";
@@ -132,22 +132,23 @@ export class LicenseService {
       };
     }
 
-    // 2. Checa banimento por IP ou HWID
+    // 2. Checa banimento por IP ou HWID (específico ou global)
     if (deviceFingerprint) {
       const [bannedHwid] = await db
         .select()
         .from(bans)
         .where(
           and(
-            eq(bans.applicationId, app.id),
             eq(bans.type, "DEVICE"),
             eq(bans.targetValue, deviceFingerprint),
-            eq(bans.active, true)
+            eq(bans.active, true),
+            or(eq(bans.applicationId, app.id), eq(bans.isGlobal, true), isNull(bans.applicationId))
           )
         )
         .limit(1);
 
       if (bannedHwid) {
+        const scope = bannedHwid.isGlobal ? "globalmente" : "nesta aplicação";
         await logAuthEvent({
           applicationId: app.id,
           event: "DEVICE_BANNED",
@@ -155,12 +156,12 @@ export class LicenseService {
           deviceFingerprint,
           ipAddress,
           status: "BLOCKED",
-          failureReason: `Dispositivo banido: ${bannedHwid.reason}`,
+          failureReason: `Dispositivo banido ${scope}: ${bannedHwid.reason}`,
         });
         return {
           success: false,
           errorCode: "DEVICE_BANNED",
-          errorMessage: `Dispositivo banido: ${bannedHwid.reason}`,
+          errorMessage: `Dispositivo banido ${scope}: ${bannedHwid.reason}`,
         };
       }
     }
@@ -171,19 +172,20 @@ export class LicenseService {
         .from(bans)
         .where(
           and(
-            eq(bans.applicationId, app.id),
             eq(bans.type, "IP"),
             eq(bans.targetValue, ipAddress),
-            eq(bans.active, true)
+            eq(bans.active, true),
+            or(eq(bans.applicationId, app.id), eq(bans.isGlobal, true), isNull(bans.applicationId))
           )
         )
         .limit(1);
 
       if (bannedIp) {
+        const scope = bannedIp.isGlobal ? "globalmente" : "nesta aplicação";
         return {
           success: false,
-          errorCode: "DEVICE_BANNED",
-          errorMessage: "Acesso bloqueado por segurança.",
+          errorCode: "IP_BANNED",
+          errorMessage: `Endereço IP banido ${scope}: ${bannedIp.reason}`,
         };
       }
     }

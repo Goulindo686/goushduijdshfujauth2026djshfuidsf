@@ -10,6 +10,7 @@ import {
   BookOpen, 
   LogOut, 
   ShieldCheck,
+  ShieldAlert,
   Code
 } from "lucide-react";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ export function Sidebar() {
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Applications", href: "/applications", icon: Layers },
+    { label: "Blacklist Global", href: "/blacklist", icon: ShieldAlert },
     { label: "Guia de Conexão", href: "/connect", icon: Code },
     { label: "Global Logs", href: "/logs", icon: ScrollText },
     { label: "Documentation", href: "/docs", icon: BookOpen },

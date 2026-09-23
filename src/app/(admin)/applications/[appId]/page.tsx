@@ -1176,12 +1176,31 @@ if (data.success && data.data.authorized) {
                               <button
                                 onClick={async () => {
                                   await fetch(`/api/admin/applications/${appId}/devices/${dev.id}`, { method: "POST" });
-                                  toast.success("Dispositivo banido!");
+                                  toast.success("Dispositivo banido nesta aplicação!");
                                   fetchDevicesAndBans();
                                 }}
-                                className="text-xs text-rose-400 hover:text-rose-300"
+                                className="text-xs text-amber-400 hover:text-amber-300"
+                                title="Bloquear apenas neste app"
                               >
-                                Banir HWID
+                                Banir no App
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const reason = prompt("Motivo do banimento GLOBAL deste computador (em todas as aplicações):");
+                                  if (reason) {
+                                    await fetch(`/api/admin/applications/${appId}/devices/${dev.id}`, {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ isGlobal: true, reason }),
+                                    });
+                                    toast.success("Dispositivo banido globalmente!");
+                                    fetchDevicesAndBans();
+                                  }
+                                }}
+                                className="text-xs text-rose-500 hover:text-rose-400 font-semibold"
+                                title="Bloquear este computador em TODOS os seus aplicativos"
+                              >
+                                Banir Global
                               </button>
                             </td>
                           </tr>

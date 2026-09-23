@@ -4,7 +4,7 @@ import * as React from "react";
 import { Header } from "@/components/layout/header";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Terminal, Check } from "lucide-react";
+import { Copy, Terminal, Check, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
 export default function DocsPage() {
@@ -249,6 +249,40 @@ try {
               >
                 {copiedSection === "sdk" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
               </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Blacklist Global Security Guide */}
+        <Card className="border-[#202024] bg-[#0A0A0C]">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2 text-white">
+              <ShieldAlert className="h-4 w-4 text-rose-500" />
+              Hierarquia de Proteção e Blacklist Global
+            </CardTitle>
+            <CardDescription>
+              Entenda como funciona o bloqueio por aplicação vs. bloqueio global multi-aplicações:
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-xs text-neutral-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="p-3 rounded bg-[#101014] border border-[#1E1E22] space-y-1">
+                <span className="font-semibold text-amber-400 flex items-center gap-1.5">
+                  1. Banimento por Aplicação
+                </span>
+                <p className="text-neutral-400 text-[11px]">
+                  Configurado dentro da aba <strong>Dispositivos</strong> ou <strong>Usuários</strong> de uma aplicação específica. Impede o acesso exclusivamente àquele produto (ex: apenas no <code>goubyp4ss</code>).
+                </p>
+              </div>
+
+              <div className="p-3 rounded bg-[#101014] border border-[#1E1E22] space-y-1">
+                <span className="font-semibold text-rose-400 flex items-center gap-1.5">
+                  2. Blacklist Global (Multi-App)
+                </span>
+                <p className="text-neutral-400 text-[11px]">
+                  Configurado no menu <strong>Blacklist Global</strong>. Rejeita imediatamente qualquer tentativa de autenticação, registro ou checagem de licença em <strong>todas as suas aplicações atuais e futuras</strong> com HTTP 403.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>

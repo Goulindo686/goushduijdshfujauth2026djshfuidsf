@@ -133,15 +133,17 @@ export const devices = pgTable("devices", {
 // ==========================================
 export const bans = pgTable("bans", {
   id: text("id").primaryKey(),
-  applicationId: text("application_id").notNull().references(() => applications.id, { onDelete: "cascade" }),
+  applicationId: text("application_id").references(() => applications.id, { onDelete: "cascade" }),
   type: varchar("type", { length: 20 }).notNull(), // USER, LICENSE, DEVICE, IP
   targetValue: varchar("target_value", { length: 255 }).notNull(),
   reason: text("reason").notNull(),
   notes: text("notes"),
   active: boolean("active").notNull().default(true),
+  isGlobal: boolean("is_global").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => ({
   banTargetIdx: index("ban_target_idx").on(table.applicationId, table.type, table.targetValue),
+  banGlobalIdx: index("ban_global_idx").on(table.isGlobal, table.type, table.targetValue),
 }));
 
 // ==========================================

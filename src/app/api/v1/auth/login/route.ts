@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { db, pool } from "@/lib/db";
 import { applications, applicationUsers, bans, devices, plans } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, isNull } from "drizzle-orm";
 import { verifyPassword, generateSecureToken } from "@/lib/security/crypto";
 import { checkRateLimit, extractClientIp } from "@/lib/security/rate-limiter";
 import { apiError, apiSuccess } from "@/lib/api/response";
@@ -50,15 +50,45 @@ export async function POST(req: NextRequest) {
     return apiError("APPLICATION_MAINTENANCE", app.maintenanceMessage || "Aplicação em manutenção", 503);
   }
 
-  // 2. Checa ban de IP ou HWID
+  // 2. Checa ban de IP ou HWID (específico ou global)
   if (hwid) {
     const [bannedHwid] = await db
       .select()
       .from(bans)
-      .where(and(eq(bans.applicationId, app.id), eq(bans.type, "DEVICE"), eq(bans.targetValue, hwid), eq(bans.active, true)))
+      .where(
+        and(
+          eq(bans.type, "DEVICE"),
+          eq(bans.targetValue, hwid),
+          eq(bans.active, true),
+          or(eq(bans.applicationId, app.id), eq(bans.isGlobal, true), isNull(bans.applicationId))
+        )
+      )
       .limit(1);
 
-    if (bannedHwid) return apiError("DEVICE_BANNED", `Dispositivo banido: ${bannedHwid.reason}`, 403);
+    if (bannedHwid) {
+      const scope = bannedHwid.isGlobal ? "globalmente" : "nesta aplicação";
+      return apiError("DEVICE_BANNED", `Dispositivo banido ${scope}: ${bannedHwid.reason}`, 403);
+    }
+  }
+
+  if (ip) {
+    const [bannedIp] = await db
+      .select()
+      .from(bans)
+      .where(
+        and(
+          eq(bans.type, "IP"),
+          eq(bans.targetValue, ip),
+          eq(bans.active, true),
+          or(eq(bans.applicationId, app.id), eq(bans.isGlobal, true), isNull(bans.applicationId))
+        )
+      )
+      .limit(1);
+
+    if (bannedIp) {
+      const scope = bannedIp.isGlobal ? "globalmente" : "nesta aplicação";
+      return apiError("IP_BANNED", `Endereço IP banido ${scope}: ${bannedIp.reason}`, 403);
+    }
   }
 
   // 3. Busca usuário com plano

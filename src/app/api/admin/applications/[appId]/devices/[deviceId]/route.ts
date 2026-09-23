@@ -37,13 +37,17 @@ export async function DELETE(
   return apiSuccess({ message: "Dispositivo desvinculado com sucesso." });
 }
 
-// POST: Banir dispositivo
+// POST: Banir dispositivo (App específico ou Global)
 export async function POST(
   req: NextRequest,
   { params }: { params: { appId: string; deviceId: string } }
 ) {
   const admin = await getAdminFromSession();
   if (!admin) return apiError("UNAUTHORIZED", "Não autenticado", 401);
+
+  const body = await req.json().catch(() => ({}));
+  const isGlobal = body?.isGlobal === true;
+  const reason = body?.reason || (isGlobal ? "Bloqueio global de dispositivo" : "Dispositivo bloqueado pelo administrador");
 
   const [dev] = await db
     .select()
@@ -57,22 +61,25 @@ export async function POST(
 
   await db.insert(bans).values({
     id: crypto.randomUUID(),
-    applicationId: params.appId,
+    applicationId: isGlobal ? null : params.appId,
     type: "DEVICE",
     targetValue: dev.deviceFingerprint,
-    reason: "Dispositivo bloqueado pelo administrador",
+    reason,
     active: true,
+    isGlobal,
     createdAt: new Date(),
   });
 
   const ip = extractClientIp(req.headers);
   await logAuditAction({
-    action: "BAN_DEVICE",
+    action: isGlobal ? "BAN_DEVICE_GLOBAL" : "BAN_DEVICE",
     resource: "device",
     resourceId: dev.id,
     ipAddress: ip,
-    metadata: { fingerprint: dev.deviceFingerprint },
+    metadata: { fingerprint: dev.deviceFingerprint, isGlobal },
   });
 
-  return apiSuccess({ message: "Dispositivo banido com sucesso." });
+  return apiSuccess({ 
+    message: isGlobal ? "Dispositivo banido globalmente em todos os apps!" : "Dispositivo banido com sucesso nesta aplicação." 
+  });
 }
