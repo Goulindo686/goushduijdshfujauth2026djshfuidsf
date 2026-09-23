@@ -175,15 +175,30 @@ export async function POST(req: NextRequest) {
     .where(eq(applicationUsers.id, user.id));
 
   if (hwid) {
-    const [existingDev] = await db
+    const userDevices = await db
       .select()
       .from(devices)
-      .where(and(eq(devices.applicationId, app.id), eq(devices.userId, user.id), eq(devices.deviceFingerprint, hwid)))
-      .limit(1);
+      .where(and(eq(devices.applicationId, app.id), eq(devices.userId, user.id)));
 
-    if (existingDev) {
-      await db.update(devices).set({ lastSeen: now }).where(eq(devices.id, existingDev.id));
+    const matchingDev = userDevices.find(d => d.deviceFingerprint === hwid);
+
+    if (matchingDev) {
+      await db.update(devices).set({ lastSeen: now }).where(eq(devices.id, matchingDev.id));
     } else {
+      // Trava de HWID: Impede compartilhamento de contas entre computadores diferentes
+      if (userDevices.length > 0) {
+        await logAuthEvent({
+          applicationId: app.id,
+          event: "DEVICE_MISMATCH",
+          userIdentifier: username,
+          ipAddress: ip,
+          deviceFingerprint: hwid,
+          status: "BLOCKED",
+          failureReason: `Tentativa de login em dispositivo não autorizado (HWID mismatch).`,
+        });
+        return apiError("DEVICE_MISMATCH", "Esta conta já está vinculada a outro computador. Solicite o reset de HWID ao administrador.", 403);
+      }
+
       await db.insert(devices).values({
         id: crypto.randomUUID(),
         applicationId: app.id,
