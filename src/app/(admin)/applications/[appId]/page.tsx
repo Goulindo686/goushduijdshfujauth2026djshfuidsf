@@ -32,7 +32,8 @@ import {
   EyeOff,
   AlertTriangle,
   RefreshCw,
-  Search
+  Search,
+  Ban
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -1032,24 +1033,54 @@ if (data.success && data.data.authorized) {
                                     <PlayCircle className="h-3.5 w-3.5" />
                                   </button>
                                 ) : (
-                                  <button
-                                    onClick={async () => {
-                                      const reason = prompt("Motivo do banimento:");
-                                      if (reason) {
-                                        await fetch(`/api/admin/applications/${appId}/users/${u.id}`, {
-                                          method: "PATCH",
-                                          headers: { "Content-Type": "application/json" },
-                                          body: JSON.stringify({ status: "BANNED", banReason: reason }),
-                                        });
-                                        toast.success("Usuário banido.");
-                                        fetchUsers();
-                                      }
-                                    }}
-                                    className="p-1 text-rose-400 hover:bg-[#18181B] rounded"
-                                    title="Banir"
-                                  >
-                                    <ShieldAlert className="h-3.5 w-3.5" />
-                                  </button>
+                                  <>
+                                    <button
+                                      onClick={async () => {
+                                        const reason = prompt("Motivo do banimento nesta aplicação:");
+                                        if (reason) {
+                                          await fetch(`/api/admin/applications/${appId}/users/${u.id}`, {
+                                            method: "PATCH",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ status: "BANNED", banReason: reason }),
+                                          });
+                                          toast.success("Usuário banido nesta aplicação.");
+                                          fetchUsers();
+                                        }
+                                      }}
+                                      className="p-1 text-amber-400 hover:bg-[#18181B] rounded"
+                                      title="Banir somente nesta aplicação"
+                                    >
+                                      <ShieldAlert className="h-3.5 w-3.5" />
+                                    </button>
+                                    <button
+                                      onClick={async () => {
+                                        const reason = prompt(`Motivo do banimento GLOBAL do usuário "${u.username}" (em todos os apps):`);
+                                        if (reason) {
+                                          await fetch(`/api/admin/applications/${appId}/users/${u.id}`, {
+                                            method: "PATCH",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ status: "BANNED", banReason: reason }),
+                                          });
+                                          await fetch("/api/admin/blacklist", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({
+                                              type: "USER",
+                                              targetValue: u.username,
+                                              reason,
+                                              notes: `Banido globalmente a partir da aplicação ${app?.name || appId}`,
+                                            }),
+                                          });
+                                          toast.success(`Usuário ${u.username} banido globalmente em todos os apps!`);
+                                          fetchUsers();
+                                        }
+                                      }}
+                                      className="p-1 text-rose-500 hover:text-rose-400 hover:bg-[#18181B] rounded"
+                                      title="Banir globalmente em TODOS os aplicativos"
+                                    >
+                                      <Ban className="h-3.5 w-3.5" />
+                                    </button>
+                                  </>
                                 )}
                                 <button
                                   onClick={async () => {

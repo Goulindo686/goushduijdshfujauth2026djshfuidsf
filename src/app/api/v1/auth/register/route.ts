@@ -89,6 +89,25 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // 1.2 Checa se o nome de usuário está na blacklist global ou da aplicação
+  const [bannedUser] = await db
+    .select()
+    .from(bans)
+    .where(
+      and(
+        eq(bans.type, "USER"),
+        eq(bans.targetValue, username.trim()),
+        eq(bans.active, true),
+        or(eq(bans.applicationId, app.id), eq(bans.isGlobal, true), isNull(bans.applicationId))
+      )
+    )
+    .limit(1);
+
+  if (bannedUser) {
+    const scope = bannedUser.isGlobal ? "globalmente" : "nesta aplicação";
+    return apiError("USER_BANNED", `Este nome de usuário foi banido ${scope}: ${bannedUser.reason}`, 403);
+  }
+
   // 2. Checa se o username já existe
   const [existingUser] = await db
     .select()
