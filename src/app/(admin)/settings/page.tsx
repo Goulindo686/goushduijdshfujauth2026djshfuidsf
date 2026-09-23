@@ -194,98 +194,102 @@ export default function SettingsPage() {
         subtitle="Gerenciamento da conta administrativa, 2FA e API Keys"
       />
 
-      <main className="p-8 space-y-6 max-w-4xl w-full">
-        {/* Card: 2FA TOTP */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm">Autenticação em Dois Fatores (2FA)</CardTitle>
-                <CardDescription>
-                  Adiciona uma camada extra de proteção ao painel com Google Authenticator ou similar
-                </CardDescription>
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Card: 2FA TOTP */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm">Autenticação em Dois Fatores (2FA)</CardTitle>
+                  <CardDescription>
+                    Adiciona uma camada extra de proteção ao painel com Google Authenticator ou similar
+                  </CardDescription>
+                </div>
+                {adminData?.totpEnabled ? (
+                  <Badge variant="success">2FA Ativado</Badge>
+                ) : (
+                  <Badge variant="warning">2FA Desativado</Badge>
+                )}
               </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
               {adminData?.totpEnabled ? (
-                <Badge variant="success">2FA Ativado</Badge>
+                <div className="flex items-center justify-between p-3 rounded-md bg-[#101014] border border-[#202024]">
+                  <div className="text-xs text-neutral-300">
+                    Sua conta está protegida por verificação em duas etapas via aplicativo TOTP.
+                  </div>
+                  <Button size="sm" variant="danger" onClick={handleDisable2FA}>
+                    Desativar 2FA
+                  </Button>
+                </div>
               ) : (
-                <Badge variant="warning">2FA Desativado</Badge>
+                <div className="flex items-center justify-between p-3 rounded-md bg-[#101014] border border-[#202024]">
+                  <div className="text-xs text-neutral-400">
+                    Recomendamos ativar o 2FA para proteger o acesso administrativo ao seu servidor.
+                  </div>
+                  <Button size="sm" onClick={handleStart2FA}>
+                    Configurar 2FA
+                  </Button>
+                </div>
               )}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {adminData?.totpEnabled ? (
-              <div className="flex items-center justify-between p-3 rounded-md bg-[#101014] border border-[#202024]">
-                <div className="text-xs text-neutral-300">
-                  Sua conta está protegida por verificação em duas etapas via aplicativo TOTP.
+            </CardContent>
+          </Card>
+
+          {/* Card: Alterar Senha */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Alterar Senha do Administrador</CardTitle>
+              <CardDescription>Utiliza hashing Argon2id com alta resistência a força bruta</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs text-neutral-300">Senha Atual</label>
+                  <Input
+                    type="password"
+                    required
+                    placeholder="••••••••••••"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
                 </div>
-                <Button size="sm" variant="danger" onClick={handleDisable2FA}>
-                  Desativar 2FA
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between p-3 rounded-md bg-[#101014] border border-[#202024]">
-                <div className="text-xs text-neutral-400">
-                  Recomendamos ativar o 2FA para proteger o acesso administrativo ao seu servidor.
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-neutral-300">Nova Senha</label>
+                    <Input
+                      type="password"
+                      required
+                      minLength={8}
+                      placeholder="Mínimo 8 caracteres"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-neutral-300">Confirmar Nova Senha</label>
+                    <Input
+                      type="password"
+                      required
+                      placeholder="Repita a nova senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
                 </div>
-                <Button size="sm" onClick={handleStart2FA}>
-                  Configurar 2FA
+
+                <Button type="submit" isLoading={isChangingPass}>
+                  Atualizar Senha
                 </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Card: Alterar Senha */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Alterar Senha do Administrador</CardTitle>
-            <CardDescription>Utiliza hashing Argon2id com alta resistência a força bruta</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
-              <div className="space-y-1.5">
-                <label className="text-xs text-neutral-300">Senha Atual</label>
-                <Input
-                  type="password"
-                  required
-                  placeholder="••••••••••••"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs text-neutral-300">Nova Senha</label>
-                <Input
-                  type="password"
-                  required
-                  minLength={8}
-                  placeholder="Mínimo 8 caracteres"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs text-neutral-300">Confirmar Nova Senha</label>
-                <Input
-                  type="password"
-                  required
-                  placeholder="Repita a nova senha"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-
-              <Button type="submit" isLoading={isChangingPass}>
-                Atualizar Senha
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Card: API Keys Administrativas */}
-        <Card>
+        <Card className="border-[#1C1C1F] bg-[#08080A]">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -308,27 +312,27 @@ export default function SettingsPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-[#1C1C1F] text-neutral-500 font-mono uppercase text-[10px] bg-[#0A0A0C]">
+                  <thead className="border-b border-[#1C1C1F] text-neutral-400 font-mono uppercase text-[10px] bg-[#0A0A0C]">
                     <tr>
-                      <th className="p-3">Identificador</th>
-                      <th className="p-3">Prefixo</th>
-                      <th className="p-3">Permissões (Scopes)</th>
-                      <th className="p-3">Criada em</th>
-                      <th className="p-3 text-right">Ação</th>
+                      <th className="px-4 py-3 font-medium">Identificador</th>
+                      <th className="px-4 py-3 font-medium">Prefixo</th>
+                      <th className="px-4 py-3 font-medium">Permissões (Scopes)</th>
+                      <th className="px-4 py-3 font-medium">Criada em</th>
+                      <th className="px-4 py-3 font-medium text-right">Ação</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#141416]">
                     {apiKeys.map((k) => (
-                      <tr key={k.id} className="hover:bg-[#0E0E12]">
-                        <td className="p-3 font-medium text-white">{k.name}</td>
-                        <td className="p-3 font-mono text-neutral-400">{k.prefix}...</td>
-                        <td className="p-3 font-mono text-neutral-400">
+                      <tr key={k.id} className="hover:bg-[#0E0E12] transition-colors">
+                        <td className="px-4 py-3 font-medium text-white">{k.name}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-400">{k.prefix}...</td>
+                        <td className="px-4 py-3 font-mono text-neutral-400">
                           {Array.isArray(k.scopes) ? k.scopes.join(", ") : "all"}
                         </td>
-                        <td className="p-3 font-mono text-neutral-500">
+                        <td className="px-4 py-3 font-mono text-neutral-500">
                           {new Date(k.createdAt).toLocaleDateString("pt-BR")}
                         </td>
-                        <td className="p-3 text-right">
+                        <td className="px-4 py-3 text-right">
                           <button
                             onClick={() => handleRevokeApiKey(k.id)}
                             className="text-xs text-rose-400 hover:text-rose-300"

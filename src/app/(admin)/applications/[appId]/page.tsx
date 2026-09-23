@@ -572,7 +572,7 @@ export default function ApplicationDetailPage() {
     return (
       <>
         <Header title="Carregando..." />
-        <main className="p-8 space-y-6">
+        <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-64 w-full" />
         </main>
@@ -600,7 +600,7 @@ export default function ApplicationDetailPage() {
         subtitle={`App ID: ${app.appId} • Versão: v${app.currentVersion || "1.0.0"}`}
       />
 
-      <main className="p-8 space-y-6 max-w-7xl w-full">
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
         {/* Banner de Manutenção Ativo */}
         {app.status === "MAINTENANCE" && (
           <div className="flex items-center space-x-3 rounded-lg bg-amber-950/30 border border-amber-800/40 p-3 text-xs text-amber-300">

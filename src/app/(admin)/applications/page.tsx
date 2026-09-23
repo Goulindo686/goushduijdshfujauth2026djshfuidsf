@@ -109,7 +109,7 @@ export default function ApplicationsPage() {
         subtitle="Gerencie seus softwares, clientes e parametrizações remotas"
       />
 
-      <main className="p-8 space-y-6 max-w-7xl w-full">
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-white tracking-tight">Suas Aplicações</h2>
@@ -123,7 +123,8 @@ export default function ApplicationsPage() {
 
         {/* Lista de Apps em Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <Skeleton className="h-40 w-full" />
             <Skeleton className="h-40 w-full" />
             <Skeleton className="h-40 w-full" />
             <Skeleton className="h-40 w-full" />
@@ -138,7 +139,7 @@ export default function ApplicationsPage() {
             <Button onClick={() => setIsModalOpen(true)}>Criar Primeira Aplicação</Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {apps.map((app) => (
               <Link key={app.id} href={`/applications/${app.id}`}>
                 <Card className="hover:border-neutral-500 hover:bg-[#0E0E12] transition-all cursor-pointer h-full flex flex-col justify-between group">

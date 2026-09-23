@@ -72,7 +72,7 @@ export default function LogsPage() {
         subtitle="Registro em tempo real de eventos de autenticação e ações administrativas"
       />
 
-      <main className="p-8 space-y-6 max-w-7xl w-full">
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-1 border-b sm:border-b-0 border-[#1C1C1F]">
             <button
@@ -124,7 +124,7 @@ export default function LogsPage() {
           </div>
         </div>
 
-        <Card>
+        <Card className="border-[#1C1C1F] bg-[#08080A]">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-6 space-y-3">
@@ -140,35 +140,35 @@ export default function LogsPage() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="border-b border-[#1C1C1F] text-neutral-500 font-mono uppercase text-[10px] bg-[#0A0A0C]">
+                    <thead className="border-b border-[#1C1C1F] text-neutral-400 font-mono uppercase text-[10px] bg-[#0A0A0C]">
                       <tr>
-                        <th className="p-3">Data/Hora</th>
-                        <th className="p-3">Aplicação</th>
-                        <th className="p-3">Evento</th>
-                        <th className="p-3">Identificador / Licença</th>
-                        <th className="p-3">HWID</th>
-                        <th className="p-3">IP</th>
-                        <th className="p-3">Status</th>
-                        <th className="p-3 text-right">Motivo</th>
+                        <th className="px-4 py-3 font-medium">Data/Hora</th>
+                        <th className="px-4 py-3 font-medium">Aplicação</th>
+                        <th className="px-4 py-3 font-medium">Evento</th>
+                        <th className="px-4 py-3 font-medium">Identificador / Licença</th>
+                        <th className="px-4 py-3 font-medium">HWID</th>
+                        <th className="px-4 py-3 font-medium">IP</th>
+                        <th className="px-4 py-3 font-medium">Status</th>
+                        <th className="px-4 py-3 font-medium text-right">Motivo</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#141416]">
                       {logs.map((item) => (
-                        <tr key={item.id} className="hover:bg-[#0E0E12]">
-                          <td className="p-3 font-mono text-neutral-400 whitespace-nowrap">
+                        <tr key={item.id} className="hover:bg-[#0E0E12] transition-colors">
+                          <td className="px-4 py-3 font-mono text-neutral-400 whitespace-nowrap">
                             {new Date(item.createdAt).toLocaleString("pt-BR")}
                           </td>
-                          <td className="p-3 font-medium text-white">{item.appName || "—"}</td>
-                          <td className="p-3 font-mono text-neutral-300">{item.event}</td>
-                          <td className="p-3 font-mono text-neutral-300">
+                          <td className="px-4 py-3 font-medium text-white whitespace-nowrap">{item.appName || "—"}</td>
+                          <td className="px-4 py-3 font-mono text-neutral-300">{item.event}</td>
+                          <td className="px-4 py-3 font-mono text-neutral-300">
                             {item.userIdentifier || item.licenseKeyMasked || "—"}
                           </td>
-                          <td className="p-3 font-mono text-neutral-500 truncate max-w-[120px]">
+                          <td className="px-4 py-3 font-mono text-neutral-500 truncate max-w-[140px]" title={item.deviceFingerprint || ""}>
                             {item.deviceFingerprint || "—"}
                           </td>
-                          <td className="p-3 font-mono text-neutral-500">{item.ipAddress || "—"}</td>
-                          <td className="p-3"><StatusBadge status={item.status} /></td>
-                          <td className="p-3 text-right text-neutral-400 font-mono truncate max-w-xs">
+                          <td className="px-4 py-3 font-mono text-neutral-500">{item.ipAddress || "—"}</td>
+                          <td className="px-4 py-3"><StatusBadge status={item.status} /></td>
+                          <td className="px-4 py-3 text-right text-neutral-400 font-mono truncate max-w-xs" title={item.failureReason || ""}>
                             {item.failureReason || "—"}
                           </td>
                         </tr>
@@ -184,27 +184,27 @@ export default function LogsPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-[#1C1C1F] text-neutral-500 font-mono uppercase text-[10px] bg-[#0A0A0C]">
+                  <thead className="border-b border-[#1C1C1F] text-neutral-400 font-mono uppercase text-[10px] bg-[#0A0A0C]">
                     <tr>
-                      <th className="p-3">Data/Hora</th>
-                      <th className="p-3">Ação</th>
-                      <th className="p-3">Recurso</th>
-                      <th className="p-3">ID do Recurso</th>
-                      <th className="p-3">IP do Admin</th>
-                      <th className="p-3 text-right">Metadados</th>
+                      <th className="px-4 py-3 font-medium">Data/Hora</th>
+                      <th className="px-4 py-3 font-medium">Ação</th>
+                      <th className="px-4 py-3 font-medium">Recurso</th>
+                      <th className="px-4 py-3 font-medium">ID do Recurso</th>
+                      <th className="px-4 py-3 font-medium">IP do Admin</th>
+                      <th className="px-4 py-3 font-medium text-right">Metadados</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#141416]">
                     {auditLogs.map((item) => (
-                      <tr key={item.id} className="hover:bg-[#0E0E12]">
-                        <td className="p-3 font-mono text-neutral-400 whitespace-nowrap">
+                      <tr key={item.id} className="hover:bg-[#0E0E12] transition-colors">
+                        <td className="px-4 py-3 font-mono text-neutral-400 whitespace-nowrap">
                           {new Date(item.createdAt).toLocaleString("pt-BR")}
                         </td>
-                        <td className="p-3 font-mono font-medium text-white">{item.action}</td>
-                        <td className="p-3 font-mono text-neutral-300">{item.resource}</td>
-                        <td className="p-3 font-mono text-neutral-500 truncate max-w-[100px]">{item.resourceId || "—"}</td>
-                        <td className="p-3 font-mono text-neutral-500">{item.ipAddress || "—"}</td>
-                        <td className="p-3 text-right font-mono text-neutral-400 text-[11px] truncate max-w-xs">
+                        <td className="px-4 py-3 font-mono font-medium text-white">{item.action}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-300">{item.resource}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-500 truncate max-w-[120px]" title={item.resourceId || ""}>{item.resourceId || "—"}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-500">{item.ipAddress || "—"}</td>
+                        <td className="px-4 py-3 text-right font-mono text-neutral-400 text-[11px] truncate max-w-xs" title={JSON.stringify(item.metadata || {})}>
                           {JSON.stringify(item.metadata || {})}
                         </td>
                       </tr>

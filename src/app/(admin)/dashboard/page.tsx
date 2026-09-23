@@ -80,7 +80,7 @@ export default function DashboardPage() {
         subtitle="Visão unificada das suas aplicações, licenças e telemetria de segurança"
       />
 
-      <main className="p-8 space-y-8 max-w-7xl w-full">
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
         {/* Top bar com refresh */}
         <div className="flex items-center justify-between">
           <div>
@@ -267,16 +267,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Atividade Recente */}
-        <Card>
+        <Card className="border-[#1C1C1F] bg-[#08080A]">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <div>
               <CardTitle className="text-sm">Atividade Recente</CardTitle>
-              <p className="text-xs text-neutral-400 mt-0.5">Últimos eventos de validação e autenticação</p>
+              <p className="text-xs text-neutral-400 mt-0.5">Últimos eventos de validação e autenticação em tempo real</p>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {loading ? (
-              <div className="space-y-2">
+              <div className="p-6 space-y-2">
                 <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-10 w-full" />
@@ -284,33 +284,33 @@ export default function DashboardPage() {
             ) : data?.recentActivity && data.recentActivity.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-[#1C1C1F] text-neutral-500 font-mono uppercase text-[10px]">
+                  <thead className="border-b border-[#1C1C1F] text-neutral-400 font-mono uppercase text-[10px] bg-[#0A0A0C]">
                     <tr>
-                      <th className="pb-2">Data/Hora</th>
-                      <th className="pb-2">Aplicação</th>
-                      <th className="pb-2">Evento</th>
-                      <th className="pb-2">Identificador / Licença</th>
-                      <th className="pb-2">Dispositivo (HWID)</th>
-                      <th className="pb-2">IP</th>
-                      <th className="pb-2 text-right">Status</th>
+                      <th className="px-4 py-3 font-medium">Data/Hora</th>
+                      <th className="px-4 py-3 font-medium">Aplicação</th>
+                      <th className="px-4 py-3 font-medium">Evento</th>
+                      <th className="px-4 py-3 font-medium">Identificador / Licença</th>
+                      <th className="px-4 py-3 font-medium">Dispositivo (HWID)</th>
+                      <th className="px-4 py-3 font-medium">IP</th>
+                      <th className="px-4 py-3 font-medium text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#141416]">
                     {data.recentActivity.map((log) => (
-                      <tr key={log.id} className="hover:bg-[#0F0F12] transition-colors">
-                        <td className="py-2.5 font-mono text-neutral-400 whitespace-nowrap">
+                      <tr key={log.id} className="hover:bg-[#0E0E12] transition-colors">
+                        <td className="px-4 py-3 font-mono text-neutral-400 whitespace-nowrap">
                           {new Date(log.createdAt).toLocaleString("pt-BR")}
                         </td>
-                        <td className="py-2.5 font-medium text-white">{log.appName || "—"}</td>
-                        <td className="py-2.5 font-mono text-neutral-300">{log.event}</td>
-                        <td className="py-2.5 font-mono text-neutral-300">
+                        <td className="px-4 py-3 font-medium text-white whitespace-nowrap">{log.appName || "—"}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-300">{log.event}</td>
+                        <td className="px-4 py-3 font-mono text-neutral-300">
                           {log.userIdentifier || log.licenseKeyMasked || "—"}
                         </td>
-                        <td className="py-2.5 font-mono text-neutral-500 truncate max-w-[120px]">
+                        <td className="px-4 py-3 font-mono text-neutral-500 truncate max-w-[160px]" title={log.deviceFingerprint || ""}>
                           {log.deviceFingerprint || "—"}
                         </td>
-                        <td className="py-2.5 font-mono text-neutral-500">{log.ipAddress || "—"}</td>
-                        <td className="py-2.5 text-right">
+                        <td className="px-4 py-3 font-mono text-neutral-500">{log.ipAddress || "—"}</td>
+                        <td className="px-4 py-3 text-right">
                           <StatusBadge status={log.status} />
                         </td>
                       </tr>
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                 </table>
               </div>
             ) : (
-              <p className="text-center py-6 text-xs text-neutral-500 font-mono">
+              <p className="text-center py-8 text-xs text-neutral-500 font-mono">
                 Nenhum evento registrado até o momento.
               </p>
             )}

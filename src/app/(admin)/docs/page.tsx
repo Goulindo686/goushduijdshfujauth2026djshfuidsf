@@ -167,7 +167,7 @@ export default function DocsPage() {
         subtitle="Referência completa de endpoints públicos e integração com SDK"
       />
 
-      <main className="p-8 space-y-8 max-w-5xl w-full">
+      <main className="w-full max-w-[1400px] mx-auto px-6 md:px-8 py-6 space-y-6">
         {/* Intro */}
         <Card className="border-[#202024]">
           <CardHeader>

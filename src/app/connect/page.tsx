@@ -212,7 +212,7 @@ int main() {
 
   return (
     <div className="min-h-screen bg-black text-[#EDEDED] p-4 sm:p-8 select-none">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#1C1C1F] pb-6">
           <div className="flex items-center space-x-3">

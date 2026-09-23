@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Header } from "@/components/layout/header";
 import { toast } from "sonner";
 
 interface GlobalBan {
@@ -148,45 +149,51 @@ export default function BlacklistPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#1C1C1F] pb-5">
-        <div>
-          <div className="flex items-center space-x-2">
-            <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-rose-500" />
-              Blacklist Global
-            </h1>
-            <Badge variant="danger" className="text-[10px]">
-              Multi-App
-            </Badge>
+    <>
+      <Header
+        title="Blacklist Global"
+        subtitle="Central de bloqueio de computadores (HWID), IPs e usuários em todas as aplicações"
+      />
+
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-8 py-6 space-y-6">
+        {/* Top Action Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5 text-rose-500" />
+                Bloqueios em Nível Global
+              </h2>
+              <Badge variant="danger" className="text-[10px]">
+                Multi-App
+              </Badge>
+            </div>
+            <p className="text-xs text-neutral-400 mt-1">
+              Alvos cadastrados aqui são rejeitados instantaneamente em <strong className="text-white">todas</strong> as aplicações ativas da sua conta.
+            </p>
           </div>
-          <p className="text-xs text-neutral-400 mt-1">
-            Alvos bloqueados aqui são rejeitados instantaneamente em <strong className="text-white">todas</strong> as suas aplicações criadas no GouAuth.
-          </p>
-        </div>
 
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchBans}
-            className="flex items-center space-x-1.5 border-[#27272A] text-neutral-300 hover:text-white"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            <span>Atualizar</span>
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchBans}
+              className="flex items-center space-x-1.5 border-[#27272A] text-neutral-300 hover:text-white"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>Atualizar</span>
+            </Button>
 
-          <Button
-            size="sm"
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white font-medium"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Novo Ban Global</span>
-          </Button>
+            <Button
+              size="sm"
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center space-x-1.5 bg-rose-600 hover:bg-rose-500 text-white font-medium"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Novo Ban Global</span>
+            </Button>
+          </div>
         </div>
-      </div>
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -294,15 +301,15 @@ export default function BlacklistPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-[#1C1C1F] text-neutral-500 font-mono uppercase text-[10px] bg-[#0A0A0C]">
+                <thead className="border-b border-[#1C1C1F] text-neutral-400 font-mono uppercase text-[10px] bg-[#0A0A0C]">
                   <tr>
-                    <th className="p-3">Tipo</th>
-                    <th className="p-3">Alvo Bloqueado</th>
-                    <th className="p-3">Motivo</th>
-                    <th className="p-3">Notas</th>
-                    <th className="p-3">Data do Ban</th>
-                    <th className="p-3">Escopo</th>
-                    <th className="p-3 text-right">Ação</th>
+                    <th className="px-4 py-3 w-32 font-medium">Tipo</th>
+                    <th className="px-4 py-3 w-80 font-medium">Alvo Bloqueado</th>
+                    <th className="px-4 py-3 min-w-[180px] font-medium">Motivo</th>
+                    <th className="px-4 py-3 w-48 font-medium">Notas</th>
+                    <th className="px-4 py-3 w-44 font-medium">Data do Ban</th>
+                    <th className="px-4 py-3 w-48 font-medium">Escopo</th>
+                    <th className="px-4 py-3 w-28 text-right font-medium">Ação</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#141416]">
@@ -312,7 +319,7 @@ export default function BlacklistPage() {
 
                     return (
                       <tr key={ban.id} className="hover:bg-[#0E0E12] transition-colors">
-                        <td className="p-3">
+                        <td className="px-4 py-3.5 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-[#18181B] text-neutral-300 border border-[#27272A]">
                             {isDevice && <Laptop className="h-3 w-3 text-amber-400" />}
                             {isIp && <Globe className="h-3 w-3 text-cyan-400" />}
@@ -320,34 +327,36 @@ export default function BlacklistPage() {
                             {ban.type}
                           </span>
                         </td>
-                        <td className="p-3 font-mono font-medium text-white flex items-center space-x-2">
-                          <span className="truncate max-w-sm">{ban.targetValue}</span>
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(ban.targetValue);
-                              toast.success("Copiado!");
-                            }}
-                            className="text-neutral-500 hover:text-white p-0.5"
-                            title="Copiar alvo"
-                          >
-                            <Copy className="h-3 w-3" />
-                          </button>
+                        <td className="px-4 py-3.5 font-mono font-medium text-white">
+                          <div className="flex items-center space-x-2">
+                            <span className="truncate max-w-xs">{ban.targetValue}</span>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(ban.targetValue);
+                                toast.success("Copiado!");
+                              }}
+                              className="text-neutral-500 hover:text-white p-0.5 transition-colors"
+                              title="Copiar alvo"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </td>
-                        <td className="p-3 text-neutral-300 max-w-xs truncate">
+                        <td className="px-4 py-3.5 text-neutral-300 max-w-xs truncate">
                           {ban.reason}
                         </td>
-                        <td className="p-3 text-neutral-500 font-mono text-[11px] max-w-xs truncate">
+                        <td className="px-4 py-3.5 text-neutral-500 font-mono text-[11px] max-w-xs truncate">
                           {ban.notes || "—"}
                         </td>
-                        <td className="p-3 font-mono text-neutral-500 text-[11px]">
+                        <td className="px-4 py-3.5 font-mono text-neutral-500 text-[11px] whitespace-nowrap">
                           {new Date(ban.createdAt).toLocaleString("pt-BR")}
                         </td>
-                        <td className="p-3">
+                        <td className="px-4 py-3.5 whitespace-nowrap">
                           <Badge variant="danger" className="text-[10px]">
                             GLOBAL (TODOS OS APPS)
                           </Badge>
                         </td>
-                        <td className="p-3 text-right">
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap">
                           <Button
                             variant="outline"
                             size="sm"
@@ -493,6 +502,7 @@ export default function BlacklistPage() {
           </div>
         </div>
       )}
-    </div>
+      </main>
+    </>
   );
 }
