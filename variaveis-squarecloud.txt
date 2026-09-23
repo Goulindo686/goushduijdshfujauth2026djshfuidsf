@@ -1,0 +1,8 @@
+PORT=80
+NODE_ENV=production
+DATABASE_URL=postgresql://squarecloud:7LCrkqT0hVyYsTEksOMnUBoJ@square-cloud-db-59d8ea3325f74e28ba5b73dbab677f0e.squareweb.app:7002/squarecloud
+DATABASE_CERTS_DIR="./banco de dados"
+JWT_SECRET=gouauth_prod_secret_key_9f0713c3afb447d390e7b0884c15789c
+NEXT_PUBLIC_APP_URL=https://gouauth.squareweb.app
+ADMIN_EMAIL=admin@gouauth.com
+ADMIN_PASSWORD=GouAuth#2026
