@@ -61,6 +61,11 @@ export async function PATCH(
         active: true,
         createdAt: new Date(),
       });
+    } else if (data.status === "ACTIVE") {
+      await db
+        .update(bans)
+        .set({ active: false })
+        .where(and(eq(bans.type, "USER"), eq(bans.targetValue, user.username)));
     }
   }
   if (data.notes !== undefined) {
